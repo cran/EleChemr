@@ -4,9 +4,10 @@
 \alias{CV}
 \title{Cyclic voltammetry digitial simulation}
 \usage{
-CV(Co = 0.001, Dx = 1e-05, Eo = 0.1, Vi = 0.3, Vf = -0.3,
-  Vs = 0.001, ko = 0.01, alpha = 0.5, Temp = 298.15, n = 1,
-  Area = 1, DerApprox = 2, errCheck = FALSE, Method = "Euler")
+CV(Co = 0.001, Dx = 1e-05, Eo = 0.1, Dm = 0.45, Vi = 0.3,
+  Vf = -0.3, Vs = 0.001, ko = 0.01, alpha = 0.5, Temp = 298.15,
+  n = 1, Area = 1, DerApprox = 2, errCheck = FALSE,
+  Method = "Euler")
 }
 \arguments{
 \item{Co}{bulk concentration}
@@ -14,6 +15,8 @@ CV(Co = 0.001, Dx = 1e-05, Eo = 0.1, Vi = 0.3, Vf = -0.3,
 \item{Dx}{diffusion coefficient}
 
 \item{Eo}{reduction potential of the species}
+
+\item{Dm}{simulation parameter, maximum 0.5 for explicit methods}
 
 \item{Vi}{initial potential of the sweep}
 
@@ -35,7 +38,7 @@ CV(Co = 0.001, Dx = 1e-05, Eo = 0.1, Vi = 0.3, Vf = -0.3,
 
 \item{errCheck}{if true the function returns a list with parameters for CottrCheck function}
 
-\item{Method}{method to be used for the simulation = "Euler" "BI" "RK4"}
+\item{Method}{method to be used for the simulation = "Euler" "BI" "RK4" "CN" "BDF"}
 }
 \value{
 if errCheck == F a graph I vs E, if errCheck == T a list
@@ -44,6 +47,6 @@ if errCheck == F a graph I vs E, if errCheck == T a list
 Return a graph I vs E of the electrochemical process
 }
 \examples{
-CV(Co = 0.001, DerApprox = 2, errCheck = FALSE, Method = "Euler")
+CV(Co = 0.001, DerApprox = 2, Dm = 0.45, errCheck = FALSE, Method = "Euler")
 
 }

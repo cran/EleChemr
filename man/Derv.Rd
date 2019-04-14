@@ -4,7 +4,8 @@
 \alias{Derv}
 \title{Derivative calculation of concentration profile}
 \usage{
-Derv(npoints = 2, h, Ox, mode = "Forward", Derivative = "First")
+Derv(npoints = 2, h, Ox, mode = "Forward", Derivative = "First",
+  CoefMat = FALSE)
 }
 \arguments{
 \item{npoints}{number of points to be used for the derivative}
@@ -16,9 +17,11 @@ Derv(npoints = 2, h, Ox, mode = "Forward", Derivative = "First")
 \item{mode}{"Forward" or "Backward" the derivative will be calculated for the npoints}
 
 \item{Derivative}{"First" or "Second" derivative to calculate}
+
+\item{CoefMat}{if T return the derivative coefficient matrix for selected derivative}
 }
 \value{
-a vector with the derivative requested
+a vector with the derivative requested or the coefficient of such derivative
 }
 \description{
 Return a the derivative of the concentration profile simulated

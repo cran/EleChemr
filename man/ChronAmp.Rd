@@ -4,9 +4,9 @@
 \alias{ChronAmp}
 \title{Chrono amperometry digital simulation}
 \usage{
-ChronAmp(Co = 0.001, exptime = 1, Dx = 1e-05, Temp = 298.15,
-  n = 1, Area = 1, DerApprox = 2, errCheck = FALSE,
-  Method = "Euler")
+ChronAmp(Co = 0.001, exptime = 1, Dx = 1e-05, Dm = 0.45,
+  Temp = 298.15, n = 1, Area = 1, DerApprox = 2,
+  errCheck = FALSE, Method = "Euler")
 }
 \arguments{
 \item{Co}{bulk concentration}
@@ -14,6 +14,8 @@ ChronAmp(Co = 0.001, exptime = 1, Dx = 1e-05, Temp = 298.15,
 \item{exptime}{experimental time to be simulated}
 
 \item{Dx}{diffusion coefficient}
+
+\item{Dm}{simulation parameter, maximum 0.5 for explicit methods}
 
 \item{Temp}{temperature in kelvin}
 
@@ -25,7 +27,7 @@ ChronAmp(Co = 0.001, exptime = 1, Dx = 1e-05, Temp = 298.15,
 
 \item{errCheck}{if true the function returns a list with parameters for CottrCheck function}
 
-\item{Method}{method to be used for the simulation = "Euler" "BI" "RK4"}
+\item{Method}{method to be used for the simulation = "Euler" "BI" "RK4" "CN" "BDF"}
 }
 \value{
 if errCheck == F a graph I vs t, if errCheck == T a list
@@ -34,6 +36,6 @@ if errCheck == F a graph I vs t, if errCheck == T a list
 Return a graph I vs t of the electrochemical process
 }
 \examples{
-ChronAmp(Co = 0.001, exptime = 1, DerApprox = 2, errCheck = FALSE, Method = "Euler")
+ChronAmp(Co = 0.001, exptime = 1, DerApprox = 2, Dm = 0.45, errCheck = FALSE, Method = "Euler")
 
 }

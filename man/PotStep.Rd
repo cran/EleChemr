@@ -4,8 +4,8 @@
 \alias{PotStep}
 \title{Chrono amperometry with a finite step digital simulation}
 \usage{
-PotStep(Co = 0.001, exptime = 1, Dx = 1e-05, eta = 0.1,
-  Temp = 298.15, n = 1, Area = 1, DerApprox = 2,
+PotStep(Co = 0.001, exptime = 1, Dx = 1e-05, Dm = 0.45,
+  eta = 0.1, Temp = 298.15, n = 1, Area = 1, DerApprox = 2,
   errCheck = FALSE, Method = "Euler")
 }
 \arguments{
@@ -14,6 +14,8 @@ PotStep(Co = 0.001, exptime = 1, Dx = 1e-05, eta = 0.1,
 \item{exptime}{experimental time to be simulated}
 
 \item{Dx}{diffusion coefficient}
+
+\item{Dm}{simulation parameter, maximum 0.5 for explicit methods}
 
 \item{eta}{overpotential of the step}
 
@@ -27,7 +29,7 @@ PotStep(Co = 0.001, exptime = 1, Dx = 1e-05, eta = 0.1,
 
 \item{errCheck}{if true the function returns a list with parameters for CottrCheck function}
 
-\item{Method}{method to be used for the simulation = "Euler" "BI" "RK4"}
+\item{Method}{method to be used for the simulation = "Euler" "BI" "RK4" "CN" "BDF"}
 }
 \value{
 if errCheck == F a graph I vs t, if errCheck == T a list
@@ -36,6 +38,6 @@ if errCheck == F a graph I vs t, if errCheck == T a list
 Return a graph I vs t of the electrochemical process
 }
 \examples{
-PotStep(Co = 0.001, exptime = 1, DerApprox = 2, errCheck = FALSE, Method = "Euler")
+PotStep(Co = 0.001, exptime = 1, Dm =0.45, DerApprox = 2, errCheck = FALSE, Method = "Euler")
 
 }
