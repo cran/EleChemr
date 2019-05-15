@@ -4,8 +4,8 @@
 \alias{CVEC}
 \title{EC behaviour cyclic voltammetry simulator}
 \usage{
-CVEC(Co = 0.001, Dx = 1e-05, Eo = 0.1, Dm = 0.45, Vi = 0.3,
-  Vf = -0.3, Vs = 0.001, ko = 0.01, kc = 1e-04, alpha = 0.5,
+CVEC(Co = 0.001, Dx = 1e-05, Eo = 0, Dm = 0.45, Vi = 0.3,
+  Vf = -0.3, Vs = 0.001, ko = 0.01, kc = 0.001, alpha = 0.5,
   Temp = 298.15, n = 1, Area = 1, DerApprox = 2,
   errCheck = FALSE, Method = "Euler")
 }

@@ -175,3 +175,264 @@ invMat = function(A) {
   INV = (1/det(A))*INV
   return(INV)
 }
+
+#' Parameters call
+#'
+#' Returns a list with the parameters necessary for the simulation
+#'
+#' @param Fun Name of the function this function is called to. Must be a string.
+#' @param n. Number of electrons
+#' @param Temp. Temperature for the simulation
+#' @param Dx1. Diffusion coefficient of species One
+#' @param eta. OverPotential for potential step
+#' @param exptime. experimental time for the simulation
+#' @param Eo1. reduction potential of the first electrochemical reaction
+#' @param Eo2. reduction potential of the second electrochemical reaction
+#' @param Eo3. reduction potential of the third electrochemical reaction
+#' @param Eo4. reduction potential of the fourth electrochemical reaction
+#' @param Dred1. diffusion coefficient of the first reduced species
+#' @param Dred2. diffusion coefficient of the second reduced species
+#' @param Dred3. diffusion coefficient of the third reduced species
+#' @param Dred4. diffusion coefficient of the fourth reduced species
+#' @param alpha1. charge transfer coefficient of the first electrochemical reaction
+#' @param alpha2. charge transfer coefficient of the second electrochemical reaction
+#' @param alpha3. charge transfer coefficient of the third electrochemical reaction
+#' @param alpha4. charge transfer coefficient of the fourth electrochemical reaction
+#' @param kc. Chemical rate constant for first Ox Species, used in simulation with just one species
+#' @param kco. Chemical rate constant for first Ox Species
+#' @param kc1. Chemical rate constant for first Red Species
+#' @param ko1. heterogeneous electron transfer rate constant of the first electrochemical reaction
+#' @param ko2. heterogeneous electron transfer rate constant of the second electrochemical reaction
+#' @param ko3. heterogeneous electron transfer rate constant of the third electrochemical reaction
+#' @param ko4. heterogeneous electron transfer rate constant of the fourth electrochemical reaction
+#' @param kc2. Chemical rate constant for second Red Species
+#' @param kc3. Chemical rate constant for third Red Species
+#' @param kc4. Chemical rate constant for fourth Red Species
+#' @param Dm. Simulation parameter, maximum 0.5 for explicit methods
+#' @param Vi. Initial potential of the sweep
+#' @param Vf. Final potential of the sweep
+#' @param Vs. Scan rate of the simulation
+#'
+#'
+#' @return inverse matrix of the selected
+#'
+#' @examples
+#' ParCall("ChronAmp", n. = 1, Temp. = 298, Dx1. = 0.0001, exptime. = 1, Dm. = 0.45)
+#'
+#' @export
+
+
+ParCall = function(Fun, n., Temp., Dx1.,
+                   eta., exptime., Eo1., ko1., ko2., kc.,
+                   Dm., Vf., Vi., Vs., alpha1., Eo2., Dred1., Dred2.,
+                   alpha2., Dred3., Dred4., ko3., ko4., kco., kc1., kc2.,
+                   kc3., kc4., alpha3., alpha4., Eo3., Eo4.){
+  if (!(Fun %in% c("ChronAmp", "PotStep", "LinSwp", "CV", "CVEC", "CVEE", "Gen_CV" )) ) {
+    return("Not suitable function was called for parameter calculation")
+  }
+  if (Fun == "ChronAmp") {
+    FA = 96485
+    R = 8.3145
+    f = ((FA*n.)/(R*Temp.))
+    Da = Dx1./Dx1.
+    l = 100
+    tau = exptime.
+    dt = exptime./l
+    dtn = dt/tau
+    h = sqrt((Da*dtn)/Dm.)
+    j = ceiling(6*(l)^0.5)
+    vt = c(1:l)
+    t = dt*vt
+    Par = list(FA,R,f,dtn,Da,l,h,j,t,tau)
+    names(Par) = c("FA", "R", "f", "dtn", "Da", "l", "h", "j", "t", "tau")
+    return(Par)
+
+  } else if (Fun == "PotStep") {
+
+    FA = 96485
+    R = 8.3145
+    f = ((FA*n.)/(R*Temp.))
+    Da = Dx1./Dx1.
+    l = 100
+    tau = exptime.
+    dt = exptime./l
+    dtn = dt/tau
+    p = eta.*f
+    h = sqrt((Da*dtn)/Dm.)
+    j = ceiling(6*(l)^0.5)
+    vt = c(1:l)
+    t = dt*vt
+    Par = list(FA,R,f,dtn,p,Da,l,h,j,t,tau)
+    names(Par) = c("FA", "R", "f", "dtn", "p", "Da", "l", "h", "j", "t","tau")
+    return(Par)
+
+  } else if (Fun == "LinSwp") {
+
+    FA = 96485
+    R = 8.3145
+    f = ((FA*n.)/(R*Temp.))
+    Da = Dx1./Dx1.
+    exptime = abs(Vf.-Vi.)/Vs.
+    l = 100
+    dt = exptime/l
+    tau = (1/(f*Vs.))
+    dtn = dt/tau
+    j = ceiling(6*(l)^0.5)
+    h = sqrt((Da*dtn)/Dm.)
+    vt = c(1:(l+1))
+    t = dt*vt
+    PotentialScan = Vi.-Vs.*t
+    p = f*(Vi.- Eo1.) - t/tau
+    KO = ko1.*sqrt(tau/Dx1.)
+    Kf = KO*exp(-alpha1.*p)
+    Kb = KO*exp((1-alpha1.)*p)
+    Par = list(FA,R,f,dtn,Da,l,h,j,t,PotentialScan,KO,Kf,Kb,tau)
+    names(Par) = c("FA", "R", "f", "dtn", "Da", "l", "h",
+                   "j", "t", "PotentialScan", "KO", "Kf", "Kb", "tau")
+    return(Par)
+
+  } else if (Fun == "CV" | Fun == "CVEC") {
+
+    FA = 96485
+    R = 8.3145
+    f = ((FA*n.)/(R*Temp.))
+    Da = Dx1./Dx1.
+    exptime = 2*abs(Vf.-Vi.)/Vs.
+    l = 100
+    dt = exptime/l
+    tau = (1/(f*Vs.))
+    dtn = dt/tau
+    j = ceiling(6*(l)^0.5)
+    h = sqrt((Da*dtn)/Dm.)
+    vt = c(1:(l+1))
+    t = dt*vt
+    forwardScan = Vi.-Vs.*t[1:((l/2) +1)]
+    backwardScan = Vf. + Vs.*t[1:((l/2) +1)]
+    PotentialScan = c(forwardScan, backwardScan)
+    pf = f*(Vi.- Eo1.) - t[1:((l/2) +1)]/tau
+    pb = f*(Vf.- Eo1.) + t[1:((l/2) +1)]/tau
+    p = c(pf,pb)
+    KO = ko1.*sqrt(tau/Dx1.)
+    Kf = KO*exp(-alpha1.*p)
+    Kb = KO*exp((1-alpha1.)*p)
+
+    if (Fun == "CVEC") {
+
+      KC = kc.*tau
+      Par = list(FA,R,f,dtn,Da,l,h,j,t,PotentialScan,KO,Kf,Kb,KC,tau)
+      names(Par) = c("FA", "R", "f", "dtn", "Da", "l", "h",
+                     "j", "t", "PotentialScan", "KO", "Kf", "Kb", "KC","tau")
+      return(Par)
+
+    }
+
+    Par = list(FA,R,f,dtn,Da,l,h,j,t,PotentialScan,KO,Kf,Kb,tau)
+    names(Par) = c("FA", "R", "f", "dtn", "Da", "l", "h",
+                   "j", "t", "PotentialScan", "KO", "Kf", "Kb","tau")
+    return(Par)
+  } else if (Fun == "CVEE"){
+
+    FA = 96485
+    R = 8.3145
+    f = ((FA*n.)/(R*Temp.))
+    DOx = Dx1./Dx1.
+    DRED = Dred1./Dx1.
+    DRED2 = Dred2./Dx1.
+    exptime = 2*abs(Vf.-Vi.)/Vs.
+    l = 100
+    dt = exptime/l
+    tau = (1/(f*Vs.))
+    dtn = dt/tau
+    j = ceiling(6*(l)^0.5)
+    h = sqrt((DOx*dtn)/Dm.)
+    vt = c(1:(l+1))
+    t = dt*vt
+    forwardScan = Vi.-Vs.*t[1:((l/2) +1)]
+    backwardScan = Vf. + Vs.*t[1:((l/2) +1)]
+    PotentialScan = c(forwardScan, backwardScan)
+    p1f = f*(Vi.- Eo1.) - t[1:((l/2) +1)]/tau
+    p1b = f*(Vf.- Eo1.) + t[1:((l/2) +1)]/tau
+    p2f = f*(Vi.- Eo2.) - t[1:((l/2) +1)]/tau
+    p2b = f*(Vf.- Eo2.) + t[1:((l/2) +1)]/tau
+    p1 = c(p1f,p1b)
+    p2 = c(p2f,p2b)
+    KO1 = ko1.*sqrt(tau/Dx1.)
+    KO2 = ko2.*sqrt(tau/Dx1.)
+    Kf1 = KO1*exp(-alpha1.*p1)
+    Kf2 = KO2*exp(-alpha2.*p2)
+    Kb1 = KO1*exp((1-alpha1.)*p1)
+    Kb2 = KO2*exp((1-alpha2.)*p2)
+
+    Par = list(FA,R,f,dtn,DOx,DRED,DRED2,l,h,j,t,PotentialScan,
+               KO1,KO2,Kf1,Kf2,Kb1,Kb2,tau)
+    names(Par) = c("FA", "R", "f", "dtn", "DOx", "DRED", "DRED2", "l", "h",
+                   "j", "t", "PotentialScan", "KO1",
+                   "KO2", "Kf1", "Kf2", "Kb1", "Kb2","tau")
+    return(Par)
+
+  } else if (Fun == "Gen_CV"){
+
+    FA = 96485
+    R = 8.3145
+    f = ((FA*n.)/(R*Temp.))
+    DOx = Dx1./Dx1.
+    DRED = Dred1./Dx1.
+    DRED2 = Dred2./Dx1.
+    DRED3 = Dred3./Dx1.
+    DRED4 = Dred4./Dx1.
+    exptime = 2*abs(Vf.-Vi.)/Vs.
+    l = 100
+    dt = exptime/l
+    tau = (1/(f*Vs.))
+    dtn = dt/tau
+    j = ceiling(6*(l)^0.5)
+    h = sqrt((DOx*dtn)/Dm.)
+    vt = c(1:(l+1))
+    t = dt*vt
+    forwardScan = Vi.-Vs.*t[1:((l/2) +1)]
+    backwardScan = Vf. + Vs.*t[1:((l/2) +1)]
+    PotentialScan = c(forwardScan, backwardScan)
+    p1f = f*(Vi.- Eo1.) - t[1:((l/2) +1)]/tau
+    p1b = f*(Vf.- Eo1.) + t[1:((l/2) +1)]/tau
+    p2f = f*(Vi.- Eo2.) - t[1:((l/2) +1)]/tau
+    p2b = f*(Vf.- Eo2.) + t[1:((l/2) +1)]/tau
+    p3f = f*(Vi.- Eo3.) - t[1:((l/2) +1)]/tau
+    p3b = f*(Vf.- Eo3.) + t[1:((l/2) +1)]/tau
+    p4f = f*(Vi.- Eo4.) - t[1:((l/2) +1)]/tau
+    p4b = f*(Vf.- Eo4.) + t[1:((l/2) +1)]/tau
+    p1 = c(p1f,p1b)
+    p2 = c(p2f,p2b)
+    p3 = c(p3f,p3b)
+    p4 = c(p4f,p4b)
+    KO1 = ko1.*sqrt(tau/Dx1.)
+    KO2 = ko2.*sqrt(tau/Dx1.)
+    KO3 = ko3.*sqrt(tau/Dx1.)
+    KO4 = ko4.*sqrt(tau/Dx1.)
+    Kf1 = KO1*exp(-alpha1.*p1)
+    Kf2 = KO2*exp(-alpha2.*p2)
+    Kf3 = KO3*exp(-alpha3.*p3)
+    Kf4 = KO4*exp(-alpha4.*p4)
+    Kb1 = KO1*exp((1-alpha1.)*p1)
+    Kb2 = KO2*exp((1-alpha2.)*p2)
+    Kb3 = KO3*exp((1-alpha3.)*p3)
+    Kb4 = KO4*exp((1-alpha4.)*p4)
+    KCo = kco.*tau
+    KC1 = kc1.*tau
+    KC2 = kc2.*tau
+    KC3 = kc3.*tau
+    KC4 = kc4.*tau
+
+    Par = list(FA,R,f,dtn,DOx,DRED,DRED2,DRED3,DRED4,l,h,j,t,PotentialScan,
+               KO1,KO2,KO3,KO4,Kf1,Kf2,Kf3,Kf4,
+               Kb1,Kb2,Kb3,Kb4,KCo,KC1,KC2,KC3,KC4,tau)
+    names(Par) = c("FA", "R", "f", "dtn", "DOx", "DRED", "DRED2", "DRED3",
+                   "DRED4", "l", "h",
+                   "j", "t", "PotentialScan", "KO1",
+                   "KO2", "KO3", "KO4", "Kf1", "Kf2",
+                   "Kf3", "Kf4", "Kb1", "Kb2", "Kb3", "Kb4",
+                   "KCo", "KC1", "KC2", "KC3", "KC4", "tau")
+    return(Par)
+  }
+
+}
+

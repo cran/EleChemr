@@ -4,8 +4,8 @@
 \alias{PotStep}
 \title{Chrono amperometry with a finite step digital simulation}
 \usage{
-PotStep(Co = 0.001, exptime = 1, Dx = 1e-05, Dm = 0.45,
-  eta = 0.1, Temp = 298.15, n = 1, Area = 1, DerApprox = 2,
+PotStep(Co = 0.001, exptime = 1, Dx = 1e-05, Dm = 0.45, eta = 0,
+  Temp = 298.15, n = 1, Area = 1, DerApprox = 2,
   errCheck = FALSE, Method = "Euler")
 }
 \arguments{

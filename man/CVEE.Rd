@@ -4,9 +4,9 @@
 \alias{CVEE}
 \title{EE behaviour cyclic voltammetry simulator}
 \usage{
-CVEE(Co = 0.001, Dx1 = 1e-05, Eo1 = 0.1, Vi = 0.3, Vf = -0.3,
+CVEE(Co = 0.001, Dx1 = 1e-05, Eo1 = 0, Vi = 0.3, Vf = -0.3,
   Vs = 0.001, ko1 = 0.01, alpha1 = 0.5, Dred = 1e-05,
-  Dred2 = 1e-05, Eo2 = 0.05, ko2 = 0.01, alpha2 = 0.5, Dm = 0.45,
+  Dred2 = 1e-05, Eo2 = 0, ko2 = 0.01, alpha2 = 0.5, Dm = 0.45,
   Temp = 298.15, n = 1, Area = 1, DerApprox = 2,
   errCheck = FALSE, Method = "Euler")
 }
