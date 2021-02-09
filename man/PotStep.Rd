@@ -4,26 +4,39 @@
 \alias{PotStep}
 \title{Chrono amperometry with a finite step digital simulation}
 \usage{
-PotStep(Co = 0.001, exptime = 1, Dx = 1e-05, Dm = 0.45, eta = 0,
-  Temp = 298.15, n = 1, Area = 1, DerApprox = 2,
-  errCheck = FALSE, Method = "Euler")
+PotStep(
+  Co = 0.001,
+  exptime = 1,
+  Dx = 1e-05,
+  Dm = 0.45,
+  eta = 0,
+  Temp = 298.15,
+  n = 1,
+  Area = 1,
+  l = 100,
+  DerApprox = 2,
+  errCheck = FALSE,
+  Method = "Euler"
+)
 }
 \arguments{
-\item{Co}{bulk concentration}
+\item{Co}{bulk concentration expressed in Molar}
 
-\item{exptime}{experimental time to be simulated}
+\item{exptime}{experimental time to be simulated expressed in seconds}
 
-\item{Dx}{diffusion coefficient}
+\item{Dx}{diffusion coefficient expressed in cm^2/s}
 
 \item{Dm}{simulation parameter, maximum 0.5 for explicit methods}
 
-\item{eta}{overpotential of the step}
+\item{eta}{overpotential of the step expressed in Volt}
 
 \item{Temp}{temperature in kelvin}
 
 \item{n}{number of electrons involved in the process}
 
-\item{Area}{area of the electrode}
+\item{Area}{area of the electrode expressed in cm^2}
+
+\item{l}{number of time steps of the simulation}
 
 \item{DerApprox}{number of point for the approximation of the first derivative}
 

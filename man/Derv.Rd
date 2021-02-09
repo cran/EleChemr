@@ -4,8 +4,14 @@
 \alias{Derv}
 \title{Derivative calculation of concentration profile}
 \usage{
-Derv(npoints = 2, h, Ox, mode = "Forward", Derivative = "First",
-  CoefMat = FALSE)
+Derv(
+  npoints = 2,
+  h,
+  Ox,
+  mode = "Forward",
+  Derivative = "First",
+  CoefMat = FALSE
+)
 }
 \arguments{
 \item{npoints}{number of points to be used for the derivative}

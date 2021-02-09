@@ -212,12 +212,13 @@ invMat = function(A) {
 #' @param Vi. Initial potential of the sweep
 #' @param Vf. Final potential of the sweep
 #' @param Vs. Scan rate of the simulation
+#' @param l. numer of time steps
 #'
 #'
 #' @return inverse matrix of the selected
 #'
 #' @examples
-#' ParCall("ChronAmp", n. = 1, Temp. = 298, Dx1. = 0.0001, exptime. = 1, Dm. = 0.45)
+#' ParCall("ChronAmp", n. = 1, Temp. = 298, Dx1. = 0.0001, exptime. = 1, Dm. = 0.45, l. = 100)
 #'
 #' @export
 
@@ -226,7 +227,7 @@ ParCall = function(Fun, n., Temp., Dx1.,
                    eta., exptime., Eo1., ko1., ko2., kc.,
                    Dm., Vf., Vi., Vs., alpha1., Eo2., Dred1., Dred2.,
                    alpha2., Dred3., Dred4., ko3., ko4., kco., kc1., kc2.,
-                   kc3., kc4., alpha3., alpha4., Eo3., Eo4.){
+                   kc3., kc4., alpha3., alpha4., Eo3., Eo4., l.){
   if (!(Fun %in% c("ChronAmp", "PotStep", "LinSwp", "CV", "CVEC", "CVEE", "Gen_CV" )) ) {
     return("Not suitable function was called for parameter calculation")
   }
@@ -235,7 +236,7 @@ ParCall = function(Fun, n., Temp., Dx1.,
     R = 8.3145
     f = ((FA*n.)/(R*Temp.))
     Da = Dx1./Dx1.
-    l = 100
+    l = l.
     tau = exptime.
     dt = exptime./l
     dtn = dt/tau
@@ -253,7 +254,7 @@ ParCall = function(Fun, n., Temp., Dx1.,
     R = 8.3145
     f = ((FA*n.)/(R*Temp.))
     Da = Dx1./Dx1.
-    l = 100
+    l = l.
     tau = exptime.
     dt = exptime./l
     dtn = dt/tau
@@ -273,22 +274,22 @@ ParCall = function(Fun, n., Temp., Dx1.,
     f = ((FA*n.)/(R*Temp.))
     Da = Dx1./Dx1.
     exptime = abs(Vf.-Vi.)/Vs.
-    l = 100
+    l = l.
     dt = exptime/l
     tau = (1/(f*Vs.))
     dtn = dt/tau
     j = ceiling(6*(l)^0.5)
     h = sqrt((Da*dtn)/Dm.)
-    vt = c(1:(l+1))
+    vt = c(1:(l))
     t = dt*vt
     PotentialScan = Vi.-Vs.*t
     p = f*(Vi.- Eo1.) - t/tau
-    KO = ko1.*sqrt(tau/Dx1.)
+    KO = ko1.*sqrt(tau/(Dx1./10000))
     Kf = KO*exp(-alpha1.*p)
     Kb = KO*exp((1-alpha1.)*p)
-    Par = list(FA,R,f,dtn,Da,l,h,j,t,PotentialScan,KO,Kf,Kb,tau)
+    Par = list(FA,R,f,dtn,Da,l,h,j,t,PotentialScan,KO,Kf,Kb,tau, p)
     names(Par) = c("FA", "R", "f", "dtn", "Da", "l", "h",
-                   "j", "t", "PotentialScan", "KO", "Kf", "Kb", "tau")
+                   "j", "t", "PotentialScan", "KO", "Kf", "Kb", "tau", "p")
     return(Par)
 
   } else if (Fun == "CV" | Fun == "CVEC") {
@@ -298,37 +299,37 @@ ParCall = function(Fun, n., Temp., Dx1.,
     f = ((FA*n.)/(R*Temp.))
     Da = Dx1./Dx1.
     exptime = 2*abs(Vf.-Vi.)/Vs.
-    l = 100
+    l = l.
     dt = exptime/l
     tau = (1/(f*Vs.))
     dtn = dt/tau
     j = ceiling(6*(l)^0.5)
     h = sqrt((Da*dtn)/Dm.)
-    vt = c(1:(l+1))
+    vt = c(1:(l))
     t = dt*vt
-    forwardScan = Vi.-Vs.*t[1:((l/2) +1)]
-    backwardScan = Vf. + Vs.*t[1:((l/2) +1)]
+    forwardScan = Vi.-Vs.*t[1:((l/2))]
+    backwardScan = Vf. + Vs.*t[1:((l/2))]
     PotentialScan = c(forwardScan, backwardScan)
-    pf = f*(Vi.- Eo1.) - t[1:((l/2) +1)]/tau
-    pb = f*(Vf.- Eo1.) + t[1:((l/2) +1)]/tau
+    pf = f*(Vi.- Eo1.) - t[1:((l/2))]/tau
+    pb = f*(Vf.- Eo1.) + t[1:((l/2))]/tau
     p = c(pf,pb)
-    KO = ko1.*sqrt(tau/Dx1.)
+    KO = ko1.*sqrt(tau/(Dx1./10000))
     Kf = KO*exp(-alpha1.*p)
     Kb = KO*exp((1-alpha1.)*p)
 
     if (Fun == "CVEC") {
 
       KC = kc.*tau
-      Par = list(FA,R,f,dtn,Da,l,h,j,t,PotentialScan,KO,Kf,Kb,KC,tau)
+      Par = list(FA,R,f,dtn,Da,l,h,j,t,PotentialScan,KO,Kf,Kb,KC,tau,p)
       names(Par) = c("FA", "R", "f", "dtn", "Da", "l", "h",
-                     "j", "t", "PotentialScan", "KO", "Kf", "Kb", "KC","tau")
+                     "j", "t", "PotentialScan", "KO", "Kf", "Kb", "KC","tau", "p")
       return(Par)
 
     }
 
-    Par = list(FA,R,f,dtn,Da,l,h,j,t,PotentialScan,KO,Kf,Kb,tau)
+    Par = list(FA,R,f,dtn,Da,l,h,j,t,PotentialScan,KO,Kf,Kb,tau,p)
     names(Par) = c("FA", "R", "f", "dtn", "Da", "l", "h",
-                   "j", "t", "PotentialScan", "KO", "Kf", "Kb","tau")
+                   "j", "t", "PotentialScan", "KO", "Kf", "Kb","tau","p")
     return(Par)
   } else if (Fun == "CVEE"){
 
@@ -339,16 +340,16 @@ ParCall = function(Fun, n., Temp., Dx1.,
     DRED = Dred1./Dx1.
     DRED2 = Dred2./Dx1.
     exptime = 2*abs(Vf.-Vi.)/Vs.
-    l = 100
+    l = l.
     dt = exptime/l
     tau = (1/(f*Vs.))
     dtn = dt/tau
     j = ceiling(6*(l)^0.5)
     h = sqrt((DOx*dtn)/Dm.)
-    vt = c(1:(l+1))
+    vt = c(1:(l))
     t = dt*vt
-    forwardScan = Vi.-Vs.*t[1:((l/2) +1)]
-    backwardScan = Vf. + Vs.*t[1:((l/2) +1)]
+    forwardScan = Vi.-Vs.*t[1:((l/2))]
+    backwardScan = Vf. + Vs.*t[1:((l/2))]
     PotentialScan = c(forwardScan, backwardScan)
     p1f = f*(Vi.- Eo1.) - t[1:((l/2) +1)]/tau
     p1b = f*(Vf.- Eo1.) + t[1:((l/2) +1)]/tau
@@ -356,18 +357,18 @@ ParCall = function(Fun, n., Temp., Dx1.,
     p2b = f*(Vf.- Eo2.) + t[1:((l/2) +1)]/tau
     p1 = c(p1f,p1b)
     p2 = c(p2f,p2b)
-    KO1 = ko1.*sqrt(tau/Dx1.)
-    KO2 = ko2.*sqrt(tau/Dx1.)
+    KO1 = ko1.*sqrt(tau/(Dx1./10000))
+    KO2 = ko2.*sqrt(tau/(Dx1./10000))
     Kf1 = KO1*exp(-alpha1.*p1)
     Kf2 = KO2*exp(-alpha2.*p2)
     Kb1 = KO1*exp((1-alpha1.)*p1)
     Kb2 = KO2*exp((1-alpha2.)*p2)
 
     Par = list(FA,R,f,dtn,DOx,DRED,DRED2,l,h,j,t,PotentialScan,
-               KO1,KO2,Kf1,Kf2,Kb1,Kb2,tau)
+               KO1,KO2,Kf1,Kf2,Kb1,Kb2,tau,p1,p2)
     names(Par) = c("FA", "R", "f", "dtn", "DOx", "DRED", "DRED2", "l", "h",
                    "j", "t", "PotentialScan", "KO1",
-                   "KO2", "Kf1", "Kf2", "Kb1", "Kb2","tau")
+                   "KO2", "Kf1", "Kf2", "Kb1", "Kb2","tau", "p1", "p2")
     return(Par)
 
   } else if (Fun == "Gen_CV"){
@@ -381,33 +382,33 @@ ParCall = function(Fun, n., Temp., Dx1.,
     DRED3 = Dred3./Dx1.
     DRED4 = Dred4./Dx1.
     exptime = 2*abs(Vf.-Vi.)/Vs.
-    l = 100
+    l = l.
     dt = exptime/l
     tau = (1/(f*Vs.))
     dtn = dt/tau
     j = ceiling(6*(l)^0.5)
     h = sqrt((DOx*dtn)/Dm.)
-    vt = c(1:(l+1))
+    vt = c(1:(l))
     t = dt*vt
-    forwardScan = Vi.-Vs.*t[1:((l/2) +1)]
-    backwardScan = Vf. + Vs.*t[1:((l/2) +1)]
+    forwardScan = Vi.-Vs.*t[1:((l/2))]
+    backwardScan = Vf. + Vs.*t[1:((l/2))]
     PotentialScan = c(forwardScan, backwardScan)
-    p1f = f*(Vi.- Eo1.) - t[1:((l/2) +1)]/tau
-    p1b = f*(Vf.- Eo1.) + t[1:((l/2) +1)]/tau
-    p2f = f*(Vi.- Eo2.) - t[1:((l/2) +1)]/tau
-    p2b = f*(Vf.- Eo2.) + t[1:((l/2) +1)]/tau
-    p3f = f*(Vi.- Eo3.) - t[1:((l/2) +1)]/tau
-    p3b = f*(Vf.- Eo3.) + t[1:((l/2) +1)]/tau
-    p4f = f*(Vi.- Eo4.) - t[1:((l/2) +1)]/tau
-    p4b = f*(Vf.- Eo4.) + t[1:((l/2) +1)]/tau
+    p1f = f*(Vi.- Eo1.) - t[1:((l/2))]/tau
+    p1b = f*(Vf.- Eo1.) + t[1:((l/2))]/tau
+    p2f = f*(Vi.- Eo2.) - t[1:((l/2))]/tau
+    p2b = f*(Vf.- Eo2.) + t[1:((l/2))]/tau
+    p3f = f*(Vi.- Eo3.) - t[1:((l/2))]/tau
+    p3b = f*(Vf.- Eo3.) + t[1:((l/2))]/tau
+    p4f = f*(Vi.- Eo4.) - t[1:((l/2))]/tau
+    p4b = f*(Vf.- Eo4.) + t[1:((l/2))]/tau
     p1 = c(p1f,p1b)
     p2 = c(p2f,p2b)
     p3 = c(p3f,p3b)
     p4 = c(p4f,p4b)
-    KO1 = ko1.*sqrt(tau/Dx1.)
-    KO2 = ko2.*sqrt(tau/Dx1.)
-    KO3 = ko3.*sqrt(tau/Dx1.)
-    KO4 = ko4.*sqrt(tau/Dx1.)
+    KO1 = ko1.*sqrt(tau/(Dx1./10000))
+    KO2 = ko2.*sqrt(tau/(Dx1./10000))
+    KO3 = ko3.*sqrt(tau/(Dx1./10000))
+    KO4 = ko4.*sqrt(tau/(Dx1./10000))
     Kf1 = KO1*exp(-alpha1.*p1)
     Kf2 = KO2*exp(-alpha2.*p2)
     Kf3 = KO3*exp(-alpha3.*p3)
@@ -424,13 +425,14 @@ ParCall = function(Fun, n., Temp., Dx1.,
 
     Par = list(FA,R,f,dtn,DOx,DRED,DRED2,DRED3,DRED4,l,h,j,t,PotentialScan,
                KO1,KO2,KO3,KO4,Kf1,Kf2,Kf3,Kf4,
-               Kb1,Kb2,Kb3,Kb4,KCo,KC1,KC2,KC3,KC4,tau)
+               Kb1,Kb2,Kb3,Kb4,KCo,KC1,KC2,KC3,KC4,tau,p1,p2,p3,p4)
     names(Par) = c("FA", "R", "f", "dtn", "DOx", "DRED", "DRED2", "DRED3",
                    "DRED4", "l", "h",
                    "j", "t", "PotentialScan", "KO1",
                    "KO2", "KO3", "KO4", "Kf1", "Kf2",
                    "Kf3", "Kf4", "Kb1", "Kb2", "Kb3", "Kb4",
-                   "KCo", "KC1", "KC2", "KC3", "KC4", "tau")
+                   "KCo", "KC1", "KC2", "KC3", "KC4", "tau",
+                   "p1", "p2", "p3", "p4")
     return(Par)
   }
 

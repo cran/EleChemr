@@ -4,46 +4,66 @@
 \alias{CVEE}
 \title{EE behaviour cyclic voltammetry simulator}
 \usage{
-CVEE(Co = 0.001, Dx1 = 1e-05, Eo1 = 0, Vi = 0.3, Vf = -0.3,
-  Vs = 0.001, ko1 = 0.01, alpha1 = 0.5, Dred = 1e-05,
-  Dred2 = 1e-05, Eo2 = 0, ko2 = 0.01, alpha2 = 0.5, Dm = 0.45,
-  Temp = 298.15, n = 1, Area = 1, DerApprox = 2,
-  errCheck = FALSE, Method = "Euler")
+CVEE(
+  Co = 0.001,
+  Dx1 = 1e-05,
+  Eo1 = 0,
+  Vi = 0.3,
+  Vf = -0.3,
+  Vs = 0.001,
+  ko1 = 0.01,
+  alpha1 = 0.5,
+  Dred = 1e-05,
+  Dred2 = 1e-05,
+  Eo2 = 0,
+  ko2 = 0.01,
+  alpha2 = 0.5,
+  Dm = 0.45,
+  l = 100,
+  Temp = 298.15,
+  n = 1,
+  Area = 1,
+  DerApprox = 2,
+  errCheck = FALSE,
+  Method = "Euler"
+)
 }
 \arguments{
-\item{Co}{bulk concentration}
+\item{Co}{bulk concentration expressed in Molar}
 
-\item{Dx1}{diffusion coefficient of the oxidized species}
+\item{Dx1}{diffusion coefficient of the oxidized species expressed in cm^2/s}
 
-\item{Eo1}{reduction potential of the first electrochemical reaction}
+\item{Eo1}{reduction potential of the first electrochemical reaction expressed in Volt}
 
-\item{Vi}{initial potential of the sweep}
+\item{Vi}{initial potential of the sweep expressed in Volt}
 
-\item{Vf}{final potential of the sweep}
+\item{Vf}{final potential of the sweep expressed in Volt}
 
-\item{Vs}{potential scan rate of the simulation}
+\item{Vs}{potential scan rate of the simulation expressed in V/s}
 
-\item{ko1}{heterogeneous electron transfer rate constant of the first electrochemical reaction}
+\item{ko1}{heterogeneous electron transfer rate constant of the first electrochemical reaction expressed in m/s}
 
 \item{alpha1}{charge transfer coefficient of the first electrochemical reaction}
 
-\item{Dred}{diffusion coefficient of the first reduced species}
+\item{Dred}{diffusion coefficient of the first reduced species expressed in cm^2/s}
 
-\item{Dred2}{diffusion coefficient of the second reduced species}
+\item{Dred2}{diffusion coefficient of the second reduced species expressed in cm^2/s}
 
-\item{Eo2}{reduction potential of the second electrochemical reaction}
+\item{Eo2}{reduction potential of the second electrochemical reaction expressed in Volt}
 
-\item{ko2}{heterogeneous electron transfer rate constant of the second electrochemical reaction}
+\item{ko2}{heterogeneous electron transfer rate constant of the second electrochemical reaction expressed in m/s}
 
 \item{alpha2}{charge transfer coefficient of the second electrochemical reaction}
 
 \item{Dm}{simulation parameter, maximum 0.5 for explicit methods}
 
+\item{l}{number of time steps of the simulation}
+
 \item{Temp}{temperature in kelvin}
 
 \item{n}{number of electrons involved in the process}
 
-\item{Area}{area of the electrode}
+\item{Area}{area of the electrode expressed in cm^2}
 
 \item{DerApprox}{number of point for the approximation of the first derivative}
 

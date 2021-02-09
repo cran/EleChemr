@@ -4,27 +4,41 @@
 \alias{CV}
 \title{Cyclic voltammetry digitial simulation}
 \usage{
-CV(Co = 0.001, Dx = 1e-05, Eo = 0, Dm = 0.45, Vi = 0.3,
-  Vf = -0.3, Vs = 0.001, ko = 0.01, alpha = 0.5, Temp = 298.15,
-  n = 1, Area = 1, DerApprox = 2, errCheck = FALSE,
-  Method = "Euler")
+CV(
+  Co = 0.001,
+  Dx = 1e-05,
+  Eo = 0,
+  Dm = 0.45,
+  Vi = 0.3,
+  Vf = -0.3,
+  Vs = 0.001,
+  ko = 0.01,
+  alpha = 0.5,
+  Temp = 298.15,
+  n = 1,
+  Area = 1,
+  l = 100,
+  DerApprox = 2,
+  errCheck = FALSE,
+  Method = "Euler"
+)
 }
 \arguments{
-\item{Co}{bulk concentration}
+\item{Co}{bulk concentration expressed in Molar}
 
-\item{Dx}{diffusion coefficient}
+\item{Dx}{diffusion coefficient expressed in cm^2/s}
 
-\item{Eo}{reduction potential of the species}
+\item{Eo}{reduction potential of the species expressed in Volts}
 
 \item{Dm}{simulation parameter, maximum 0.5 for explicit methods}
 
-\item{Vi}{initial potential of the sweep}
+\item{Vi}{initial potential of the sweep expressed in Volts}
 
-\item{Vf}{final potential of the sweep}
+\item{Vf}{final potential of the sweepexpressed in Volts}
 
-\item{Vs}{potential scan rate of the simulation}
+\item{Vs}{potential scan rate of the simulation expressed in V/s}
 
-\item{ko}{heterogeneous electron transfer rate constant}
+\item{ko}{heterogeneous electron transfer rate constant expressed in m/s}
 
 \item{alpha}{charge transfer coefficient}
 
@@ -32,7 +46,9 @@ CV(Co = 0.001, Dx = 1e-05, Eo = 0, Dm = 0.45, Vi = 0.3,
 
 \item{n}{number of electrons involved in the process}
 
-\item{Area}{area of the electrode}
+\item{Area}{area of the electrode expressed in cm^2}
+
+\item{l}{number of time steps of the simulation}
 
 \item{DerApprox}{number of point for the approximation of the first derivative}
 

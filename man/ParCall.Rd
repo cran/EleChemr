@@ -4,9 +4,41 @@
 \alias{ParCall}
 \title{Parameters call}
 \usage{
-ParCall(Fun, n., Temp., Dx1., eta., exptime., Eo1., ko1., ko2., kc., Dm.,
-  Vf., Vi., Vs., alpha1., Eo2., Dred1., Dred2., alpha2., Dred3., Dred4.,
-  ko3., ko4., kco., kc1., kc2., kc3., kc4., alpha3., alpha4., Eo3., Eo4.)
+ParCall(
+  Fun,
+  n.,
+  Temp.,
+  Dx1.,
+  eta.,
+  exptime.,
+  Eo1.,
+  ko1.,
+  ko2.,
+  kc.,
+  Dm.,
+  Vf.,
+  Vi.,
+  Vs.,
+  alpha1.,
+  Eo2.,
+  Dred1.,
+  Dred2.,
+  alpha2.,
+  Dred3.,
+  Dred4.,
+  ko3.,
+  ko4.,
+  kco.,
+  kc1.,
+  kc2.,
+  kc3.,
+  kc4.,
+  alpha3.,
+  alpha4.,
+  Eo3.,
+  Eo4.,
+  l.
+)
 }
 \arguments{
 \item{Fun}{Name of the function this function is called to. Must be a string.}
@@ -72,6 +104,8 @@ ParCall(Fun, n., Temp., Dx1., eta., exptime., Eo1., ko1., ko2., kc., Dm.,
 \item{Eo3.}{reduction potential of the third electrochemical reaction}
 
 \item{Eo4.}{reduction potential of the fourth electrochemical reaction}
+
+\item{l.}{numer of time steps}
 }
 \value{
 inverse matrix of the selected
@@ -80,6 +114,6 @@ inverse matrix of the selected
 Returns a list with the parameters necessary for the simulation
 }
 \examples{
-ParCall("ChronAmp", n. = 1, Temp. = 298, Dx1. = 0.0001, exptime. = 1, Dm. = 0.45)
+ParCall("ChronAmp", n. = 1, Temp. = 298, Dx1. = 0.0001, exptime. = 1, Dm. = 0.45, l. = 100)
 
 }

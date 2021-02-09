@@ -2,13 +2,14 @@
 #'
 #' Return a graph I vs t of the electrochemical process
 #'
-#' @param Co bulk concentration
-#' @param exptime experimental time to be simulated
-#' @param Dx diffusion coefficient
+#' @param Co bulk concentration expressed in Molar
+#' @param exptime experimental time to be simulated expressed in seconds
+#' @param Dx diffusion coefficient expressed in cm^2/s
 #' @param Dm simulation parameter, maximum 0.5 for explicit methods
 #' @param Temp temperature in kelvin
 #' @param n number of electrons involved in the process
-#' @param Area area of the electrode
+#' @param Area area of the electrode expressed in cm^2
+#' @param l number of time steps of the simulation
 #' @param DerApprox number of point for the approximation of the first derivative
 #' @param errCheck if true the function returns a list with parameters for CottrCheck function
 #' @param Method method to be used for the simulation = "Euler" "BI" "RK4" "CN" "BDF"
@@ -23,10 +24,10 @@
 #' @import ggplot2
 
 ChronAmp = function(Co = 0.001, exptime = 1, Dx = 0.00001, Dm = 0.45,
-                    Temp = 298.15, n = 1, Area = 1, DerApprox = 2,
+                    Temp = 298.15, n = 1, Area = 1, DerApprox = 2, l = 100,
                     errCheck = FALSE, Method = "Euler") {
 
-  Par = ParCall("ChronAmp", n. = n, Temp. = Temp, Dx1. = Dx, exptime. = exptime, Dm. = Dm)
+  Par = ParCall("ChronAmp", n. = n, Temp. = Temp, Dx1. = Dx, exptime. = exptime, Dm. = Dm, l. = l)
   Ox = OneMat(Par$l, Par$j)
   Jox = ZeroMat(Par$l, 1)
 
@@ -193,14 +194,15 @@ ChronAmp = function(Co = 0.001, exptime = 1, Dx = 0.00001, Dm = 0.45,
 #'
 #' Return a graph I vs t of the electrochemical process
 #'
-#' @param Co bulk concentration
-#' @param exptime experimental time to be simulated
-#' @param Dx diffusion coefficient
-#' @param eta overpotential of the step
+#' @param Co bulk concentration expressed in Molar
+#' @param exptime experimental time to be simulated expressed in seconds
+#' @param Dx diffusion coefficient expressed in cm^2/s
+#' @param eta overpotential of the step expressed in Volt
 #' @param Dm simulation parameter, maximum 0.5 for explicit methods
 #' @param Temp temperature in kelvin
 #' @param n number of electrons involved in the process
-#' @param Area area of the electrode
+#' @param Area area of the electrode expressed in cm^2
+#' @param l number of time steps of the simulation
 #' @param DerApprox number of point for the approximation of the first derivative
 #' @param errCheck if true the function returns a list with parameters for CottrCheck function
 #' @param Method method to be used for the simulation = "Euler" "BI" "RK4" "CN" "BDF"
@@ -216,11 +218,11 @@ ChronAmp = function(Co = 0.001, exptime = 1, Dx = 0.00001, Dm = 0.45,
 
 
 PotStep = function(Co = 0.001, exptime = 1, Dx = 0.00001, Dm = 0.45,
-                   eta = 0, Temp = 298.15, n = 1, Area = 1,
+                   eta = 0, Temp = 298.15, n = 1, Area = 1, l= 100,
                    DerApprox = 2, errCheck = FALSE, Method = "Euler") {
 
   Par = ParCall("PotStep", n. = n, Temp. = Temp, Dx1. = Dx, exptime. = exptime,
-                Dm. = Dm, eta. = eta)
+                Dm. = Dm, eta. = eta, l. = l)
   Ox = OneMat(Par$l, Par$j)
   Red = ZeroMat(Par$l, Par$j)
   Jox = ZeroMat(Par$l, 1)
@@ -553,18 +555,19 @@ CottrCheck = function(Elefun) {
 #'
 #' Return a graph I vs E of the electrochemical process
 #'
-#' @param Co bulk concentration
-#' @param Dx diffusion coefficient
-#' @param Eo reduction potential of the species
+#' @param Co bulk concentration expressed in Molar
+#' @param Dx diffusion coefficient expressed in cm^2/s
+#' @param Eo reduction potential of the species expressed in Volt
 #' @param Dm simulation parameter, maximum 0.5 for explicit methods
-#' @param Vi initial potential of the sweep
-#' @param Vf final potential of the sweep
-#' @param Vs  potential scan rate of the simulation
-#' @param ko heterogeneous electron transfer rate constant
+#' @param Vi initial potential of the sweep expressed in Volt
+#' @param Vf final potential of the sweep expressed in Volt
+#' @param Vs  potential scan rate of the simulation expressed in V/s
+#' @param ko heterogeneous electron transfer rate constant expressed in m/s
 #' @param alpha charge transfer coefficient
 #' @param Temp temperature in kelvin
 #' @param n number of electrons involved in the process
-#' @param Area area of the electrode
+#' @param Area area of the electrode expressed in cm^2
+#' @param l number of time steps of the simulation
 #' @param DerApprox number of point for the approximation of the first derivative
 #' @param errCheck if true the function returns a list with parameters for CottrCheck function
 #' @param Method method to be used for the simulation = "Euler" "BI" "RK4" "CN" "BDF"
@@ -582,13 +585,13 @@ CottrCheck = function(Elefun) {
 
 LinSwp = function(Co = 0.001, Dx = 0.00001, Eo = 0, Dm = 0.45,
                   Vi = 0.3, Vf = -0.3, Vs = 0.001, ko = 0.01,
-                  alpha = 0.5, Temp = 298.15, n = 1, Area = 1,
+                  alpha = 0.5, Temp = 298.15, n = 1, Area = 1, l = 100,
                   DerApprox = 2, errCheck = FALSE, Method = "Euler"){
 
 
   Par = ParCall("LinSwp", n. = n, Temp. = Temp, Dx1. = Dx,
                 Eo1. = Eo, Dm. = Dm, Vi. = Vi,
-                Vf. = Vf, Vs. = Vs, ko1. = ko, alpha1. = alpha)
+                Vf. = Vf, Vs. = Vs, ko1. = ko, alpha1. = alpha, l. = l)
   Ox = OneMat(Par$l+1, Par$j)
   Red =ZeroMat(Par$l+1, Par$j)
   Jox = ZeroMat(Par$l+1, 1)
@@ -935,18 +938,19 @@ LinSwp = function(Co = 0.001, Dx = 0.00001, Eo = 0, Dm = 0.45,
 #'
 #' Return a graph I vs E of the electrochemical process
 #'
-#' @param Co bulk concentration
-#' @param Dx diffusion coefficient
-#' @param Eo reduction potential of the species
+#' @param Co bulk concentration expressed in Molar
+#' @param Dx diffusion coefficient expressed in cm^2/s
+#' @param Eo reduction potential of the species expressed in Volts
 #' @param Dm simulation parameter, maximum 0.5 for explicit methods
-#' @param Vi initial potential of the sweep
-#' @param Vf final potential of the sweep
-#' @param Vs  potential scan rate of the simulation
-#' @param ko heterogeneous electron transfer rate constant
+#' @param Vi initial potential of the sweep expressed in Volts
+#' @param Vf final potential of the sweepexpressed in Volts
+#' @param Vs  potential scan rate of the simulation expressed in V/s
+#' @param ko heterogeneous electron transfer rate constant expressed in m/s
 #' @param alpha charge transfer coefficient
 #' @param Temp temperature in kelvin
 #' @param n number of electrons involved in the process
-#' @param Area area of the electrode
+#' @param Area area of the electrode expressed in cm^2
+#' @param l number of time steps of the simulation
 #' @param DerApprox number of point for the approximation of the first derivative
 #' @param errCheck if true the function returns a list with parameters for CottrCheck function
 #' @param Method method to be used for the simulation = "Euler" "BI" "RK4" "CN" "BDF"
@@ -963,13 +967,13 @@ LinSwp = function(Co = 0.001, Dx = 0.00001, Eo = 0, Dm = 0.45,
 
 CV = function(Co = 0.001, Dx = 0.00001, Eo = 0, Dm = 0.45,
               Vi = 0.3, Vf = -0.3, Vs = 0.001, ko = 0.01,
-              alpha = 0.5, Temp = 298.15, n = 1, Area = 1,
+              alpha = 0.5, Temp = 298.15, n = 1, Area = 1, l = 100,
               DerApprox = 2, errCheck = FALSE, Method = "Euler"){
 
 
   Par = ParCall("CV", n. = n, Temp. = Temp, Dx1. = Dx,
                 Eo1. = Eo, Dm. = Dm, Vi. = Vi,
-                Vf. = Vf, Vs. = Vs, ko1. = ko, alpha1. = alpha)
+                Vf. = Vf, Vs. = Vs, ko1. = ko, alpha1. = alpha, l. = l)
   Ox = OneMat(Par$l +1, Par$j)
   Red =ZeroMat(Par$l +1, Par$j)
   Jox = ZeroMat(Par$l+1, 1)
@@ -1315,19 +1319,20 @@ CV = function(Co = 0.001, Dx = 0.00001, Eo = 0, Dm = 0.45,
 #'
 #' Return a graph I vs E of the electrochemical process
 #'
-#' @param Co bulk concentration
-#' @param Dx diffusion coefficient
-#' @param Eo reduction potential of the species
+#' @param Co bulk concentration expressed in Molar
+#' @param Dx diffusion coefficient expressed in cm^2/s
+#' @param Eo reduction potential of the species expressed in Volt
 #' @param Dm simulation parameter, maximum 0.5 for explicit methods
-#' @param Vi initial potential of the sweep
-#' @param Vf final potential of the sweep
-#' @param Vs  potential scan rate of the simulation
-#' @param ko heterogeneous electron transfer rate constant
-#' @param kc rate constant of the reaction Red -> C
+#' @param Vi initial potential of the sweep expressed in Volt
+#' @param Vf final potential of the sweep expressed in Volt
+#' @param Vs  potential scan rate of the simulation expressed in V/s
+#' @param ko heterogeneous electron transfer rate constant expressed in m/s
+#' @param kc rate constant of the reaction Red -> C expressed in s^-1
 #' @param alpha charge transfer coefficient
 #' @param Temp temperature in kelvin
 #' @param n number of electrons involved in the process
-#' @param Area area of the electrode
+#' @param l number of time steps of the simulation
+#' @param Area area of the electrode expressed in cm^2
 #' @param DerApprox number of point for the approximation of the first derivative
 #' @param errCheck if true the function returns a list with parameters for CottrCheck function
 #' @param Method method to be used for the simulation = "Euler" "BI" "RK4" "CN "BDF"
@@ -1344,13 +1349,13 @@ CV = function(Co = 0.001, Dx = 0.00001, Eo = 0, Dm = 0.45,
 
 CVEC = function(Co = 0.001, Dx = 0.00001, Eo = 0, Dm = 0.45,
                 Vi = 0.3, Vf = -0.3, Vs = 0.001, ko = 0.01,
-                kc = 0.001,
+                kc = 0.001, l = 100,
                 alpha = 0.5, Temp = 298.15, n = 1, Area = 1,
                 DerApprox = 2, errCheck = FALSE, Method = "Euler"){
 
   Par = ParCall("CVEC", n. = n, Temp. = Temp, Dx1. = Dx,
                 Eo1. = Eo, Dm. = Dm, Vi. = Vi, kc. = kc,
-                Vf. = Vf, Vs. = Vs, ko1. = ko, alpha1. = alpha)
+                Vf. = Vf, Vs. = Vs, ko1. = ko, alpha1. = alpha, l. = l)
   Ox = OneMat(Par$l +1, Par$j)
   Red =ZeroMat(Par$l +1, Par$j)
   Jox = ZeroMat(Par$l+1, 1)
@@ -1697,23 +1702,24 @@ CVEC = function(Co = 0.001, Dx = 0.00001, Eo = 0, Dm = 0.45,
 #'
 #' Return a graph I vs E of the electrochemical process
 #'
-#' @param Co bulk concentration
-#' @param Dx1 diffusion coefficient of the oxidized species
-#' @param Eo1 reduction potential of the first electrochemical reaction
-#' @param Vi initial potential of the sweep
-#' @param Vf final potential of the sweep
-#' @param Vs  potential scan rate of the simulation
-#' @param ko1 heterogeneous electron transfer rate constant of the first electrochemical reaction
+#' @param Co bulk concentration expressed in Molar
+#' @param Dx1 diffusion coefficient of the oxidized species expressed in cm^2/s
+#' @param Eo1 reduction potential of the first electrochemical reaction expressed in Volt
+#' @param Vi initial potential of the sweep expressed in Volt
+#' @param Vf final potential of the sweep expressed in Volt
+#' @param Vs  potential scan rate of the simulation expressed in V/s
+#' @param ko1 heterogeneous electron transfer rate constant of the first electrochemical reaction expressed in m/s
 #' @param alpha1 charge transfer coefficient of the first electrochemical reaction
-#' @param Dred diffusion coefficient of the first reduced species
-#' @param Dred2 diffusion coefficient of the second reduced species
-#' @param Eo2 reduction potential of the second electrochemical reaction
-#' @param ko2 heterogeneous electron transfer rate constant of the second electrochemical reaction
+#' @param Dred diffusion coefficient of the first reduced species expressed in cm^2/s
+#' @param Dred2 diffusion coefficient of the second reduced species expressed in cm^2/s
+#' @param Eo2 reduction potential of the second electrochemical reaction expressed in Volt
+#' @param ko2 heterogeneous electron transfer rate constant of the second electrochemical reaction expressed in m/s
 #' @param alpha2 charge transfer coefficient of the second electrochemical reaction
 #' @param Dm simulation parameter, maximum 0.5 for explicit methods
 #' @param Temp temperature in kelvin
 #' @param n number of electrons involved in the process
-#' @param Area area of the electrode
+#' @param Area area of the electrode expressed in cm^2
+#' @param l number of time steps of the simulation
 #' @param DerApprox number of point for the approximation of the first derivative
 #' @param errCheck if true the function returns a list with parameters for CottrCheck function
 #' @param Method method to be used for the simulation = "Euler" "BI" "RK4" "CN "BDF"
@@ -1732,14 +1738,14 @@ CVEC = function(Co = 0.001, Dx = 0.00001, Eo = 0, Dm = 0.45,
 CVEE = function(Co = 0.001, Dx1 = 0.00001, Eo1 = 0,
                 Vi = 0.3, Vf = -0.3, Vs = 0.001, ko1 = 0.01,
                 alpha1 = 0.5, Dred = 0.00001, Dred2 = 0.00001, Eo2 = 0,
-                ko2 = 0.01, alpha2 = 0.5, Dm = 0.45,
+                ko2 = 0.01, alpha2 = 0.5, Dm = 0.45, l = 100,
                 Temp = 298.15, n = 1, Area = 1,
                 DerApprox = 2, errCheck = FALSE, Method = "Euler") {
 
   Par = ParCall("CVEE", n. = n, Temp. = Temp, Dx1. = Dx1, Dred1. = Dred,
                 Eo1. = Eo1, Eo2. = Eo2, Dm. = Dm, Vi. = Vi,
                 Vf. = Vf, Vs. = Vs, ko1. = ko1, ko2. = ko2,
-                alpha1. = alpha1, alpha2. = alpha2, Dred2. = Dred2)
+                alpha1. = alpha1, alpha2. = alpha2, Dred2. = Dred2, l. = l)
   Ox = OneMat(Par$l +1, Par$j)
   Red1 = ZeroMat(Par$l +1, Par$j)
   Jox = ZeroMat(Par$l+1, 1)
@@ -2213,7 +2219,7 @@ CVEE = function(Co = 0.001, Dx1 = 0.00001, Eo1 = 0,
     theme_classic()
 
   if (errCheck == TRUE){
-    return(list((G1+G2),Dx1,Dred,Dred2,Co,Par$dtn,Par$h,i,Par$l,Par$j,n,Area,Par$DOx,Par$DRED,Par$DRED2))
+    return(list((G1+G2),Dx1,Dred,Dred2,Co,Par$dtn,Par$h,i,Par$l,Par$j,n,Area,Par$DOx,Par$DRED,Par$DRED2,Par$p1,Par$p2))
   } else {
     return(graphy)
   }
@@ -2224,37 +2230,38 @@ CVEE = function(Co = 0.001, Dx1 = 0.00001, Eo1 = 0,
 #'
 #' Return a graph I vs E of the electrochemical process, up to 4 EE mechanisms and CE mechanisms can be simulated
 #'
-#' @param Co bulk concentration
-#' @param Cred bulk concentration
-#' @param kco Chemical rate constant for Ox Species
-#' @param Dx1 diffusion coefficient of the oxidized species
-#' @param Eo1 reduction potential of the first electrochemical reaction
-#' @param kc1 Chemical rate constant for Red Species
-#' @param Vi initial potential of the sweep
-#' @param Vf final potential of the sweep
-#' @param Vs  potential scan rate of the simulation
-#' @param ko1 heterogeneous electron transfer rate constant of the first electrochemical reaction
+#' @param Co bulk concentration oxidated speciesexpressed in Molar
+#' @param Cred bulk concentration of reduced species expressed in Molar
+#' @param kco Chemical rate constant for Ox Species expressed in s^-1
+#' @param Dx1 diffusion coefficient of the oxidized species expressed in cm^2/s
+#' @param Eo1 reduction potential of the first electrochemical reaction expressed in Volt
+#' @param kc1 Chemical rate constant for Red Species expressed in s^-1
+#' @param Vi initial potential of the sweep expressed in Volt
+#' @param Vf final potential of the sweep expressed in Volt
+#' @param Vs  potential scan rate of the simulation expressed in V/s
+#' @param ko1 heterogeneous electron transfer rate constant of the first electrochemical reaction expressed in m/s
 #' @param alpha1 charge transfer coefficient of the first electrochemical reaction
-#' @param Dred diffusion coefficient of the first reduced species
-#' @param Dred2 diffusion coefficient of the second reduced species
-#' @param Eo2 reduction potential of the second electrochemical reaction
-#' @param kc2 Chemical rate constant for second Red Species
-#' @param ko2 heterogeneous electron transfer rate constant of the second electrochemical reaction
+#' @param Dred diffusion coefficient of the first reduced species expressed in cm^2/S
+#' @param Dred2 diffusion coefficient of the second reduced species expressed in cm^2/s
+#' @param Eo2 reduction potential of the second electrochemical reaction expressed in Volt
+#' @param kc2 Chemical rate constant for second Red Species expressed in s^-1
+#' @param ko2 heterogeneous electron transfer rate constant of the second electrochemical reaction expressed in m/s
 #' @param alpha2 charge transfer coefficient of the second electrochemical reaction
-#' @param Dred3 diffusion coefficient of the third reduced species
-#' @param Dred4 diffusion coefficient of the fourth reduced species
+#' @param Dred3 diffusion coefficient of the third reduced species expressed in cm^2/s
+#' @param Dred4 diffusion coefficient of the fourth reduced species cm^2/s
 #' @param alpha3 charge transfer coefficient of the third electrochemical reaction
 #' @param alpha4 charge transfer coefficient of the fourth electrochemical reaction
-#' @param kc3 Chemical rate constant for third Red Species
-#' @param ko3 heterogeneous electron transfer rate constant of the third electrochemical reaction
-#' @param kc4 Chemical rate constant for fourth Red Species
-#' @param Eo3 reduction potential of the third electrochemical reaction
-#' @param Eo4 reduction potential of the fourth electrochemical reaction
-#' @param ko4 heterogeneous electron transfer rate constant of the fourth electrochemical reaction
+#' @param kc3 Chemical rate constant for third Red Species expressed in s^-1
+#' @param ko3 heterogeneous electron transfer rate constant of the third electrochemical reaction expressed in m/s
+#' @param kc4 Chemical rate constant for fourth Red Species expressed in s^-1
+#' @param Eo3 reduction potential of the third electrochemical reaction expressed in Volt
+#' @param Eo4 reduction potential of the fourth electrochemical reaction expressed in Volt
+#' @param ko4 heterogeneous electron transfer rate constant of the fourth electrochemical reaction expressed in m/s
 #' @param Dm simulation parameter, maximum 0.5 for explicit methods
 #' @param Temp temperature in kelvin
 #' @param n number of electrons involved in the process
-#' @param Area area of the electrode
+#' @param Area area of the electrode expressed in cm^2
+#' @param l number of time steps of the simulation
 #' @param DerApprox number of point for the approximation of the first derivative
 #' @param errCheck if true the function returns a list with parameters for CottrCheck function
 #' @param Method method to be used for the simulation = "Euler" "BI" "RK4" "CN "BDF"
@@ -2276,10 +2283,10 @@ CVEE = function(Co = 0.001, Dx1 = 0.00001, Eo1 = 0,
 Gen_CV = function(Co = 0.001, Cred= 0, kco = 0, Dx1 = 0.00001, Eo1 = 0, kc1 = 0,
                   Vi = 0.3, Vf = -0.3, Vs = 0.001, ko1 = 0.01,
                   alpha1 = 0.5, Dred = 0.00001, Dred2 = 0.00001, Eo2 = 0, kc2 = 0,
-                  ko2 = 0.01, alpha2 = 0.5, Dm = 0.45, Dred3 = 0.00001,
-                  Eo3 = 0, kc3 = 0, ko3 = 0.01, alpha3 = 0.5, Dred4 = 0.00001,
-                  Eo4 = 0, kc4 = 0, ko4  = 0.01, alpha4 = 0.5,
-                  Temp = 298.15, n = 1, Area = 1,
+                  ko2 = 0, alpha2 = 0.5, Dm = 0.45, Dred3 = 0.00001,
+                  Eo3 = 0, kc3 = 0, ko3 = 0, alpha3 = 0.5, Dred4 = 0.00001,
+                  Eo4 = 0, kc4 = 0, ko4  = 0, alpha4 = 0.5,
+                  Temp = 298.15, n = 1, Area = 1, l = 100,
                   DerApprox = 2, errCheck = FALSE, Method = "Euler") {
   if (kco > 0.001 | kc1 > 0.001 | kc2 > 0.001 | kc3 > 0.001 | kc4 > 0.001 ) {
     warning("Chemical rate costant is too high, this will result in unstable simulation")
@@ -2289,7 +2296,7 @@ Gen_CV = function(Co = 0.001, Cred= 0, kco = 0, Dx1 = 0.00001, Eo1 = 0, kc1 = 0,
                 Eo1. = Eo1, Eo2. = Eo2, Eo3. = Eo3, Eo4. = Eo4, Dm. = Dm,
                 Vi. = Vi, kco. = kco, kc1. = kc1, kc2. = kc2, kc3. = kc3, kc4. = kc4,
                 Vf. = Vf, Vs. = Vs, ko1. = ko1, ko2. = ko2, ko3. = ko3, ko4. = ko4,
-                alpha1. = alpha1, alpha2. = alpha2, alpha3. = alpha3, alpha4. = alpha4)
+                alpha1. = alpha1, alpha2. = alpha2, alpha3. = alpha3, alpha4. = alpha4, l. = l)
   Ox = OneMat(Par$l +1, Par$j)
   if (Co == 0) {
     Co = 0.0000001
@@ -3007,7 +3014,10 @@ Gen_CV = function(Co = 0.001, Cred= 0, kco = 0, Dx1 = 0.00001, Eo1 = 0, kc1 = 0,
     theme_classic()
 
   if (errCheck == TRUE){
-    return(list((G1+G2),Dx1,Dred,Dred2,Co,Par$dtn,Par$h,i,Par$l,Par$j,n,Area,Par$DOx,Par$DRED,Par$DRED2))
+    return(list((G1+G2),Dx1,Dred,Dred2,Co,
+                Par$dtn,Par$h,i,Par$l,Par$j,n,
+                Area,Par$DOx,Par$DRED,Par$DRED2,
+                Par$p1,Par$p2,Par$p3,Par$p4))
   } else {
     return(graphy)
   }
